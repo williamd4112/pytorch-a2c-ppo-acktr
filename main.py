@@ -20,7 +20,9 @@ from model import CNNPolicy, MLPPolicy
 from storage import RolloutStorage
 from visualize import visdom_plot
 
+BASE_LOG_DIR = '/home/williamd/projs/visualize'
 args = get_args()
+args.log_dir = os.path.join(BASE_LOG_DIR, '%s_orig-%s%s' % (args.env_name, args.algo, args.log_dir))
 
 assert args.algo in ['a2c', 'ppo', 'acktr']
 if args.algo == 'ppo':
@@ -46,7 +48,7 @@ def main():
     print("#######")
 
     os.environ['OMP_NUM_THREADS'] = '1'
-
+    os.environ['CUDA_VISIBLE_DEVICES'] = '%d' % args.gpu_id
     if args.vis:
         from visdom import Visdom
         viz = Visdom()
@@ -239,7 +241,8 @@ def main():
                        final_rewards.max(), -dist_entropy.data[0],
                        value_loss.data[0], action_loss.data[0]))
         if j % args.vis_interval == 0:
-            win = visdom_plot(viz, win, args.log_dir, args.env_name, args.algo)
+            if not args.no_vis:
+                win = visdom_plot(viz, win, args.log_dir, args.env_name, args.algo)
 
 
 if __name__ == "__main__":
