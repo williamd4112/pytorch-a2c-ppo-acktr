@@ -20,7 +20,8 @@ from model import CNNPolicy, MLPPolicy
 from storage import RolloutStorage
 from visualize import visdom_plot
 
-BASE_LOG_DIR = '/home/williamd/projs/visualize'
+USERNAME = os.environ['USER']
+BASE_LOG_DIR = '/home/%s/projs/visualize' % USERNAME
 args = get_args()
 args.log_dir = os.path.join(BASE_LOG_DIR, '%s_orig-%s%s' % (args.env_name, args.algo, args.log_dir))
 
